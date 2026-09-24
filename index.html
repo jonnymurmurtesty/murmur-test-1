@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Murmur onboarding works!</title>
+  <meta name="theme-color" content="#0d0221" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Press+Start+2P&family=Yellowtail&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --night: #0d0221;
+      --dusk: #261447;
+      --magenta: #ff2bd6;
+      --cyan: #2de2e6;
+      --sun-top: #ffe45e;
+      --sun-bottom: #ff3864;
+      --horizon: 58%;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      background: var(--night);
+      color: #fff;
+      font-family: "Press Start 2P", ui-monospace, monospace;
+      cursor: var(--unicorn-cursor, crosshair);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Sky ---------- */
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(120% 60% at 50% var(--horizon), rgba(255, 56, 100, 0.45), transparent 60%),
+        linear-gradient(to bottom, var(--night) 0%, var(--dusk) 45%, #6b1a6b var(--horizon), var(--night) var(--horizon));
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ---------- Sun ---------- */
+
+    .sun {
+      position: fixed;
+      left: 50%;
+      bottom: calc(100% - var(--horizon));
+      width: min(52vmin, 440px);
+      aspect-ratio: 1;
+      translate: -50% 50%;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, var(--sun-top) 10%, #ff9a3c 45%, var(--sun-bottom) 80%);
+      /* Classic outrun slats, widening toward the horizon */
+      mask-image: linear-gradient(to bottom,
+        #000 0 50%,
+        transparent 50% 53%, #000 53% 60%,
+        transparent 60% 64%, #000 64% 70%,
+        transparent 70% 75%, #000 75% 80%,
+        transparent 80% 86%, #000 86% 100%);
+      -webkit-mask-image: linear-gradient(to bottom,
+        #000 0 50%,
+        transparent 50% 53%, #000 53% 60%,
+        transparent 60% 64%, #000 64% 70%,
+        transparent 70% 75%, #000 75% 80%,
+        transparent 80% 86%, #000 86% 100%);
+      filter: drop-shadow(0 0 40px rgba(255, 90, 120, 0.7));
+      clip-path: inset(0 0 50% 0);
+    }
+
+    /* ---------- Mountains ---------- */
+
+    .mountains {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(100% - var(--horizon));
+      width: 100%;
+      height: 12vh;
+      display: block;
+    }
+
+    /* ---------- Perspective grid ---------- */
+
+    .ground {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: var(--horizon);
+      bottom: 0;
+      overflow: hidden;
+      perspective: 280px;
+      perspective-origin: 50% 0;
+      background: linear-gradient(to bottom, #2a0845, var(--night) 70%);
+    }
+
+    .grid {
+      position: absolute;
+      left: -150%;
+      width: 400%;
+      top: 0;
+      height: 300%;
+      transform-origin: 50% 0;
+      transform: rotateX(72deg);
+      background-image:
+        linear-gradient(to right, var(--magenta) 2px, transparent 2px),
+        linear-gradient(to bottom, var(--magenta) 2px, transparent 2px);
+      background-size: 44px 44px;
+      animation: drive 0.9s linear infinite;
+      filter: drop-shadow(0 0 6px var(--magenta));
+    }
+
+    /* Fade the grid into the haze at the horizon */
+    .ground::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, #6b1a6b 0%, rgba(42, 8, 69, 0) 35%);
+      pointer-events: none;
+    }
+
+    @keyframes drive {
+      to { background-position: 0 44px; }
+    }
+
+    /* ---------- Headline ---------- */
+
+    main {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 0 5vw;
+      pointer-events: none;
+    }
+
+    .hero { text-align: center; }
+
+    .title {
+      margin: 0;
+      margin-top: -22vh;
+      text-align: center;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .title__chrome {
+      display: block;
+      font-family: "Monoton", "Press Start 2P", sans-serif;
+      font-weight: 400;
+      font-size: clamp(3.4rem, 13vw, 11rem);
+      letter-spacing: 0.04em;
+      background: linear-gradient(to bottom,
+        #e8f7ff 0%, #9ad7ff 38%, #1b3a8a 50%, #ff9df0 52%, #ffffff 70%, #ff5ce1 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter:
+        drop-shadow(0 0 2px #fff)
+        drop-shadow(0 0 18px var(--cyan))
+        drop-shadow(0 0 40px var(--magenta));
+      animation: flicker 6s infinite;
+    }
+
+    .title__script {
+      display: block;
+      margin-top: -0.35em;
+      font-family: "Yellowtail", cursive;
+      font-weight: 400;
+      font-size: clamp(2.4rem, 8vw, 6.5rem);
+      color: #fff;
+      transform: rotate(-6deg);
+      text-shadow:
+        0 0 4px #fff,
+        0 0 12px var(--magenta),
+        0 0 28px var(--magenta),
+        0 0 60px var(--magenta);
+      animation: neon 2.4s ease-in-out infinite alternate;
+    }
+
+    /* Arcade attract-mode prompt, docked above the road */
+    .tagline {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: max(7vh, env(safe-area-inset-bottom));
+      margin: 0;
+      font-size: clamp(0.55rem, 1.6vw, 0.8rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan);
+    }
+
+    .tagline::after {
+      content: "_";
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes neon {
+      from { opacity: 0.92; }
+      to   { opacity: 1; text-shadow: 0 0 6px #fff, 0 0 18px var(--magenta), 0 0 40px var(--magenta), 0 0 90px var(--magenta); }
+    }
+
+    @keyframes flicker {
+      0%, 92%, 96%, 100% { opacity: 1; }
+      94% { opacity: 0.55; }
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ---------- Scanlines + sparkle trail ---------- */
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+      mix-blend-mode: multiply;
+    }
+
+    #trail {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      :root { --horizon: 62%; }
+      .title { margin-top: -24vh; }
+      .title__chrome { font-size: 17vw; letter-spacing: 0; }
+      .title__script { font-size: 11vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grid, .title__chrome, .title__script, .tagline::after { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="sun" aria-hidden="true"></div>
+  <svg class="mountains" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="ridge" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3b0f5c" />
+        <stop offset="1" stop-color="#12032b" />
+      </linearGradient>
+    </defs>
+    <path fill="url(#ridge)" stroke="#ff2bd6" stroke-width="1.2" vector-effect="non-scaling-stroke"
+      d="M0 100 L0 70 L60 48 L110 66 L170 30 L230 62 L280 52 L330 74 L380 60 L420 80 L580 80 L620 58 L670 70 L720 38 L780 64 L830 44 L890 68 L940 50 L1000 66 L1000 100 Z" />
+  </svg>
+  <div class="ground" aria-hidden="true"><div class="grid"></div></div>
+
+  <main>
+    <div class="hero">
+      <h1 class="title">
+        <span class="title__chrome">Murmur</span>
+        <span class="title__script">onboarding works!</span>
+      </h1>
+      <p class="tagline">Player 1 ready</p>
+    </div>
+  </main>
+
+  <div class="scanlines" aria-hidden="true"></div>
+  <canvas id="trail" aria-hidden="true"></canvas>
+
+  <script>
+    (() => {
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const RAINBOW = ["#ff2bd6", "#ff9a3c", "#ffe45e", "#7dff8a", "#2de2e6", "#a67bff"];
+
+      /* ---------- Pixel-art unicorn cursor ---------- */
+
+      const UNICORN = [
+        "Y...............",
+        ".YY.............",
+        ".YGY............",
+        "..YGY..MM.......",
+        "...KKKMMCC......",
+        "..KWWWKMMCC.....",
+        ".KWWWWWKMCCP....",
+        "KWWEWWWWKMCPP...",
+        "KWWWWWWWWKCPP...",
+        "KWWWWWWWWWKPPC..",
+        ".KNWKKWWWWWKPCC.",
+        "..KK..KWWWWWKCC.",
+        "......KWWWWWWKP.",
+        ".....KWWWWWWWWK.",
+        ".....KWWWWWWWWK.",
+        ".....KKKKKKKKKK.",
+      ];
+      const PALETTE = {
+        K: "#2b1045", W: "#ffffff", E: "#2b1045", N: "#ff8fcf",
+        Y: "#ffd23f", G: "#fff6c2", M: "#ff2bd6", C: "#2de2e6", P: "#a67bff",
+      };
+      const SCALE = 2;
+
+      const unicornSvg = () => {
+        const rects = UNICORN.flatMap((row, y) =>
+          [...row].map((ch, x) => PALETTE[ch]
+            ? `<rect x="${x}" y="${y}" width="1" height="1" fill="${PALETTE[ch]}"/>`
+            : "")
+        ).join("");
+        const size = UNICORN.length * SCALE;
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 16 16" shape-rendering="crispEdges">${rects}</svg>`;
+      };
+
+      const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(unicornSvg())}") 1 1, crosshair`;
+      document.body.style.setProperty("--unicorn-cursor", cursorUrl);
+
+      /* ---------- Canvas helpers ---------- */
+
+      const fitCanvas = (canvas) => {
+        const ctx = canvas.getContext("2d");
+        const resize = () => {
+          canvas.width = innerWidth * dpr;
+          canvas.height = innerHeight * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        addEventListener("resize", resize);
+        return ctx;
+      };
+
+      // A four-point "✦" sparkle, the signature glint of every 80s poster.
+      const drawSparkle = (ctx, x, y, r, color, alpha) => {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = r * 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y - r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.quadraticCurveTo(x, y, x, y + r);
+        ctx.quadraticCurveTo(x, y, x - r, y);
+        ctx.quadraticCurveTo(x, y, x, y - r);
+        ctx.fill();
+        ctx.restore();
+      };
+
+      /* ---------- Twinkling starfield ---------- */
+
+      const starsCtx = fitCanvas(document.getElementById("stars"));
+      const horizon = () => innerHeight * parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--horizon")) / 100;
+
+      const makeStars = () => Array.from({ length: Math.round(innerWidth * innerHeight / 9000) }, () => ({
+        x: Math.random(),
+        y: Math.random() * 0.95,
+        r: Math.random() * 1.2 + 0.3,
+        sparkle: Math.random() < 0.12,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.6 + Math.random() * 1.8,
+        color: Math.random() < 0.7 ? "#ffffff" : RAINBOW[(Math.random() * RAINBOW.length) | 0],
+      }));
+      let stars = makeStars();
+      addEventListener("resize", () => { stars = makeStars(); });
+
+      /* ---------- Cursor sparkle trail ---------- */
+
+      const trailCtx = fitCanvas(document.getElementById("trail"));
+      const particles = [];
+      let hue = 0;
+
+      const emit = (x, y, count, burst = false) => {
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = burst ? 1.5 + Math.random() * 4 : Math.random() * 0.8;
+          particles.push({
+            x: x + (burst ? 0 : (Math.random() - 0.5) * 10),
+            y: y + (burst ? 0 : (Math.random() - 0.5) * 10),
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed + (burst ? -1 : 0.3),
+            r: 3 + Math.random() * (burst ? 7 : 5),
+            life: 1,
+            decay: 0.012 + Math.random() * 0.02,
+            spin: Math.random() * Math.PI,
+            color: RAINBOW[(hue++ >> 1) % RAINBOW.length],
+          });
+        }
+      };
+
+      let last = null;
+      const onMove = (x, y) => {
+        // Emit along the path so fast flicks still leave a continuous ribbon.
+        const dist = last ? Math.hypot(x - last.x, y - last.y) : 0;
+        const steps = Math.max(1, Math.min(8, Math.floor(dist / 12)));
+        for (let i = 1; i <= steps; i++) {
+          const px = last ? last.x + (x - last.x) * (i / steps) : x;
+          const py = last ? last.y + (y - last.y) * (i / steps) : y;
+          emit(px + 6, py + 6, 1);
+        }
+        last = { x, y };
+      };
+
+      addEventListener("pointermove", (e) => onMove(e.clientX, e.clientY));
+      addEventListener("pointerleave", () => { last = null; });
+      addEventListener("pointerdown", (e) => emit(e.clientX, e.clientY, 36, true));
+
+      /* ---------- Frame loop ---------- */
+
+      const frame = (t) => {
+        const w = innerWidth, h = innerHeight, sky = horizon();
+
+        starsCtx.clearRect(0, 0, w, h);
+        for (const s of stars) {
+          const y = s.y * sky;
+          if (y > sky - 4) continue;
+          const tw = reduceMotion ? 0.8 : 0.5 + 0.5 * Math.sin(t / 1000 * s.speed + s.phase);
+          if (s.sparkle) {
+            drawSparkle(starsCtx, s.x * w, y, 3 + tw * 5, s.color, 0.25 + tw * 0.75);
+          } else {
+            starsCtx.globalAlpha = 0.3 + tw * 0.7;
+            starsCtx.fillStyle = s.color;
+            starsCtx.fillRect(s.x * w, y, s.r * 1.5, s.r * 1.5);
+          }
+        }
+        starsCtx.globalAlpha = 1;
+
+        trailCtx.clearRect(0, 0, w, h);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.04;
+          p.vx *= 0.98;
+          p.life -= p.decay;
+          if (p.life <= 0) { particles.splice(i, 1); continue; }
+          const pulse = 0.6 + 0.4 * Math.sin(p.life * 12 + p.spin);
+          drawSparkle(trailCtx, p.x, p.y, p.r * p.life * pulse + 1, p.color, Math.min(1, p.life * 1.4));
+        }
+
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>
