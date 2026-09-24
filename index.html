@@ -385,6 +385,7 @@
       let hue = 0;
 
       const emit = (x, y, count, burst = false) => {
+        if (reduceMotion) return; // the unicorn cursor stays; the moving sparkles don't
         for (let i = 0; i < count; i++) {
           const angle = Math.random() * Math.PI * 2;
           const speed = burst ? 1.5 + Math.random() * 4 : Math.random() * 0.8;
