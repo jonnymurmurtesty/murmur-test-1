@@ -288,7 +288,6 @@
   <script>
     (() => {
       const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
       const RAINBOW = ["#ff2bd6", "#ff9a3c", "#ffe45e", "#7dff8a", "#2de2e6", "#a67bff"];
 
       /* ---------- Pixel-art unicorn cursor ---------- */
@@ -335,11 +334,19 @@
       const fitCanvas = (canvas) => {
         const ctx = canvas.getContext("2d");
         const resize = () => {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
           canvas.width = innerWidth * dpr;
           canvas.height = innerHeight * dpr;
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         };
+        // Dragging to a display with a different density changes the ratio
+        // without a resize event, so watch the current resolution and re-arm.
+        const watchDensity = () => {
+          matchMedia(`(resolution: ${devicePixelRatio}dppx)`)
+            .addEventListener("change", () => { resize(); watchDensity(); }, { once: true });
+        };
         resize();
+        watchDensity();
         addEventListener("resize", resize);
         return ctx;
       };
